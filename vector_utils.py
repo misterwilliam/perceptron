@@ -1,3 +1,4 @@
+import itertools
 import math
 import numpy
 import unittest
@@ -18,9 +19,11 @@ def sign(value):
   else:  # value < 0
     return -1
 
-def normalize(vector, bias):
-  total = sum(vector) + bias
-  return [weight / total for weight in vector], bias / total
+def normalize(vector):
+  length = euclidean_distance(vector)
+  if length == 0.0:
+    length = 0.0000000000001
+  return [weight / length for weight in vector]
 
 def euclidean_distance(vector):
   sum_squares = sum(math.pow(e, 2) for e in vector)
@@ -28,6 +31,12 @@ def euclidean_distance(vector):
 
 def cosine_similarity(a, b):
   return dot(a, b) / (euclidean_distance(a) * euclidean_distance(b))
+
+def scale_array(array, scalar):
+  return [scalar * element for element in array]
+
+def array_subtract(a, b):
+  return [a_i - b_i for a_i, b_i in itertools.izip(a, b)]
 
 # TESTS -------------------------------------------
 
