@@ -1,6 +1,6 @@
 import unittest
 
-from vector_utils import array_subtract, dot, euclidean_distance, normalize, scale_array
+from vector_utils import array_subtract, dot, euclidean_distance, normalize, scale_array, sign
 
 class Perceptron(object):
 
@@ -34,6 +34,9 @@ class Perceptron(object):
         break
     return self.weights, self.bias
 
+  def classify(self, input_vector):
+    return sign(dot(self.weights, input_vector) + self.bias)
+
 
 class AveragedPerceptron(object):
 
@@ -53,7 +56,7 @@ class AveragedPerceptron(object):
     for iteration_count in xrange(num_iters):
       num_errors = 0
       for vector, label in data:
-        activation = dot(self.get_weights(), vector) + self.get_bias()
+        activation = dot(self.weights, vector) + self.bias
         if label * activation <= 0:
           # Update weights
           for i in xrange(self.dimensions):
@@ -75,6 +78,11 @@ class AveragedPerceptron(object):
       array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter)),
       self.bias - self.cached_bias / self.counter
     )
+
+  def classify(self, input_vector):
+    weights = array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter))
+    bias = self.bias - self.cached_bias / self.counter
+    return sign(dot(weights, input_vector) + bias)
 
   def get_weights(self):
     return array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter))

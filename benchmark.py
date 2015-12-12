@@ -13,9 +13,16 @@ def classify(vector, weights, bias):
   activation = dot(vector, weights) + bias
   return sign(activation)
 
-def gen_random_training_data(num_examples, dimensions):
-  weights = normalize([random.uniform(-1, 1) for _ in xrange(dimensions)])
-  bias = random.uniform(-1, 1)
+def gen_random_training_data(num_examples, dimensions,
+                             initial_weights=None, initial_bias=None):
+  if initial_weights is None:
+    weights = normalize([random.uniform(-1, 1) for _ in xrange(dimensions)])
+  else:
+    weights = initial_weights
+  if initial_bias is None:
+    bias = random.uniform(-1, 1)
+  else:
+    bias = initial_bias
   training_data = []
   for _ in xrange(num_examples):
     feature_vector = [random.uniform(-1, 1) for _ in xrange(dimensions)]
@@ -32,6 +39,8 @@ class Benchmarker(object):
     self.perceptron = perceptron
     self.num_dimensions = num_dimensions
     self.num_training_examples = num_training_examples
+    self.test_correct = 0
+    self.test_case = 0
 
   def benchmark(self, num_trials):
     for _ in xrange(num_trials):
@@ -39,6 +48,15 @@ class Benchmarker(object):
         self.num_training_examples, self.num_dimensions)
       p = self.perceptron(self.num_dimensions, onIteration=self.handle_iteration)
       p.train(training_data, 9999999999)
+      # Eval
+      testing_data, true_weights, true_bias = gen_random_training_data(
+        500, self.num_dimensions, initial_weights=true_weights,
+        initial_bias=true_bias)
+      for vector, true_label in testing_data:
+        label = p.classify(vector)
+        if label == true_label:
+          self.test_correct += 1
+        self.test_case += 1
     # If this assertion fails then p.train(training_data, 999999999) is the problem.
     # The number 9999999999 is not big enough.
     assert(len(self.num_iterations_till_good_enough_log) == num_trials)
@@ -56,6 +74,8 @@ class Benchmarker(object):
       numpy.mean(self.num_iterations_till_good_enough_log),
       numpy.std(self.num_iterations_till_good_enough_log),
       len(self.num_iterations_till_good_enough_log)))
+    print("Test accuracy: {:f} num trials: {}".format(
+      self.test_correct / float(self.test_case), self.test_case))
 
   def reset(self):
     self.num_iterations_till_good_enough_log = []
