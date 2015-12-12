@@ -3,6 +3,8 @@ import numpy
 import unittest
 
 def dot(a, b):
+  # Believe it or not this code has been benchmarked against numpy.dot and a few other
+  # alternatives and so far this seems the fastest.
   acc = 0
   for i in xrange(len(a)):
     acc += a[i] * b[i]
@@ -43,3 +45,6 @@ class SignTests(unittest.TestCase):
     self.assertEqual(sign(4), 1)
     self.assertEqual(sign(0), 0)
     self.assertEqual(sign(-4), -1)
+
+if __name__ == "__main__":
+  unittest.main()
