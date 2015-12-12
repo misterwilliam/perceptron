@@ -53,7 +53,7 @@ class AveragedPerceptron(object):
     for iteration_count in xrange(num_iters):
       num_errors = 0
       for vector, label in data:
-        activation = dot(self.weights, vector) + self.bias
+        activation = dot(self.get_weights(), vector) + self.get_bias()
         if label * activation <= 0:
           # Update weights
           for i in xrange(self.dimensions):
@@ -75,6 +75,12 @@ class AveragedPerceptron(object):
       array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter)),
       self.bias - self.cached_bias / self.counter
     )
+
+  def get_weights(self):
+    return array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter))
+
+  def get_bias(self):
+    return self.bias - self.cached_bias / self.counter
 
 # TESTS --------------------------------
 
