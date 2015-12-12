@@ -6,18 +6,18 @@ class Perceptron(object):
 
   def __init__(self, dimensions, onIteration=None):
     self.dimensions = dimensions
-    self.weights = [0.0 for _ in xrange(dimensions)]
+    self.weights = [0.0 for _ in range(dimensions)]
     self.bias = 0.0
     self.onIteration = onIteration
 
   def train(self, data, num_iters):
-    for iteration_count in xrange(num_iters):
+    for iteration_count in range(num_iters):
       num_errors = 0
       for vector, label in data:
         activation = dot(self.weights, vector) + self.bias
         if label * activation <= 0:
           # Update weights
-          for i in xrange(self.dimensions):
+          for i in range(self.dimensions):
             self.weights[i] += label * vector[i]
           self.bias += label
           num_errors += 1

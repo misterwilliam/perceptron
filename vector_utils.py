@@ -3,7 +3,7 @@ import unittest
 
 def dot(a, b):
   acc = 0
-  for i in xrange(len(a)):
+  for i in range(len(a)):
     acc += a[i] * b[i]
   return acc
 
