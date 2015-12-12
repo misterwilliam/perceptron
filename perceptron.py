@@ -58,7 +58,7 @@ class AveragedPerceptron(object):
           # Update weights
           for i in xrange(self.dimensions):
             self.weights[i] += label * vector[i]
-            self.cached_weights += label * vector[i] * self.counter
+            self.cached_weights[i] += label * vector[i] * self.counter
           self.bias += label
           self.cached_bias += label * self.counter
           num_errors += 1
@@ -72,7 +72,7 @@ class AveragedPerceptron(object):
       if shouldContinue is False:
         break
     return (
-      array_subtract(self.weights, array_scale(self.cached_weights, 1 / self.counter)),
+      array_subtract(self.weights, scale_array(self.cached_weights, 1 / self.counter)),
       self.bias - self.cached_bias / self.counter
     )
 

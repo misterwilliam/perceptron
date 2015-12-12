@@ -27,6 +27,7 @@ def gen_random_training_data(num_examples, dimensions):
 class Benchmarker(object):
 
   def __init__(self, perceptron, num_dimensions, num_training_examples):
+    # |perceptron| is a perceptron constructor
     self.num_iterations_till_good_enough_log = []
     self.perceptron = perceptron
     self.num_dimensions = num_dimensions
@@ -36,7 +37,7 @@ class Benchmarker(object):
     for _ in xrange(num_trials):
       training_data, true_weights, true_bias = gen_random_training_data(
         self.num_training_examples, self.num_dimensions)
-      p = Perceptron(self.num_dimensions, onIteration=self.handle_iteration)
+      p = self.perceptron(self.num_dimensions, onIteration=self.handle_iteration)
       p.train(training_data, 9999999999)
     # If this assertion fails then p.train(training_data, 999999999) is the problem.
     # The number 9999999999 is not big enough.
@@ -70,7 +71,7 @@ def main():
 
   print("------- Perceptron -------")
   start = time.clock()
-  benchmarker = Benchmarker(Perceptron(10), 10, 5000)
+  benchmarker = Benchmarker(Perceptron, 10, 5000)
   benchmarker.benchmark(40)
   end = time.clock()
   print("Elapsed time: %.03f sec" % (end - start))
@@ -78,7 +79,7 @@ def main():
 
   print("--- Averaged Perceptron ---")
   start = time.clock()
-  benchmarker = Benchmarker(AveragedPerceptron(10), 10, 5000)
+  benchmarker = Benchmarker(AveragedPerceptron, 10, 5000)
   benchmarker.benchmark(40)
   end = time.clock()
   print("Elapsed time: %.03f sec" % (end - start))
