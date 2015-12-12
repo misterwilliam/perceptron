@@ -1,3 +1,4 @@
+import argparse
 import cProfile
 import numpy
 import pstats
@@ -42,20 +43,28 @@ class Benchmarker(object):
     self.num_iterations_till_good_enough_log = []
 
 def main():
-  # pr = cProfile.Profile()
-  #pr.enable()
+  parser = argparse.ArgumentParser(description='Benchmark perceptron.py')
+  parser.add_argument("--profile", action="store_true", help="Do profiling")
+  args = parser.parse_args()
+
+  if args.profile:
+    pr = cProfile.Profile()
+    pr.enable()
+
   start = time.clock()
   benchmarker = Benchmarker()
   for _ in xrange(20):
     training_data, true_weights, true_bias = gen_random_training_data(5000, 10)
     p = Perceptron(10, onIteration=benchmarker.handle_iteration)
     p.train(training_data, 100)
-  benchmarker.print_stats()
   end = time.clock()
-  print("Benchmarking took: %.03f sec" % (end - start))
-  #pr.disable()
-  # ps = pstats.Stats(pr).sort_stats('tottime')
-  # ps.print_stats()
+  print("Elapsed time: %.03f sec" % (end - start))
+  benchmarker.print_stats()
+
+  if args.profile:
+    pr.disable()
+    ps = pstats.Stats(pr).sort_stats('tottime')
+    ps.print_stats()
 
 
 if __name__ == "__main__":
