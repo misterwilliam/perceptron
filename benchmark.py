@@ -1,4 +1,5 @@
 import random
+from vector_utils import dot, sign
 from perceptron import Perceptron
 
 def classify(vector, weights, bias):
@@ -16,17 +17,33 @@ def gen_random_training_data(num_examples, dimensions):
   return training_data, weights, bias
 
 
-def main():
-  good_enough_iteration = []
-  def handle_iteration(iteration_count, weights, bias, num_errors, num_training_examples):
+class Benchmarker(object):
+
+  def __init__(self):
+    self.num_iterations_till_good_enough_log = []
+
+  def handle_iteration(self, iteration_count, weights, bias, num_errors,
+                       num_training_examples):
     if num_errors / float(num_training_examples) < 0.01:
-      good_enough_iteration.append(iteration_count)
+      self.num_iterations_till_good_enough_log.append(iteration_count)
+      return False
+
+  def get_avg_iterations_required(self):
+    print self.num_iterations_till_good_enough_log
+    return (float(sum(self.num_iterations_till_good_enough_log)) /
+              len(self.num_iterations_till_good_enough_log))
+
+  def reset(self):
+    self.num_iterations_till_good_enough_log = []
+
+def main():
+  benchmarker = Benchmarker()
   for _ in xrange(10):
     training_data, true_weights, true_bias = gen_random_training_data(10000, 15)
-    p = Perceptron(15, onIteration=handle_iteration)
-    p.train(training_data, 30)
-  print "Average iterations till good enough: %f" % (
-    sum(good_enough_iteration) / len(good_enough_iteration))
+    p = Perceptron(15, onIteration=benchmarker.handle_iteration)
+    p.train(training_data, 100)
+  print "Average iterations till good enough: %f" % benchmarker.get_avg_iterations_required()
+
 
 if __name__ == "__main__":
   main()

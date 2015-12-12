@@ -1,6 +1,6 @@
 import unittest
 
-from vector_utils import dot, normalize, sign
+from vector_utils import dot
 
 class Perceptron(object):
 
@@ -21,8 +21,14 @@ class Perceptron(object):
             self.weights[i] += label * vector[i]
           self.bias += label
           num_errors += 1
-        if self.onIteration is not None:
-          self.onIteration(iteration_count, self.weights, self.bias, num_errors, len(data))
+      if self.onIteration is not None:
+        shouldContinue = self.onIteration(iteration_count,
+                                            self.weights,
+                                            self.bias,
+                                            num_errors,
+                                            len(data))
+      if shouldContinue is False:
+        break
     return self.weights, self.bias
 
 
