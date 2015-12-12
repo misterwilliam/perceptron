@@ -1,9 +1,10 @@
 import math
+import numpy
 import unittest
 
 def dot(a, b):
   acc = 0
-  for i in range(len(a)):
+  for i in xrange(len(a)):
     acc += a[i] * b[i]
   return acc
 
